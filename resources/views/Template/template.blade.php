@@ -1,0 +1,5 @@
+@include('Template.head')
+@include('Template.navbar')
+@yield('content')
+@include('sweetalert::alert')
+@include('Template.foot')

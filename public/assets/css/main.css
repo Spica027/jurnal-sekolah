@@ -1,0 +1,653 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;500;600;700&display=swap');
+
+
+:root {
+    --color1: #2E3440;
+    --color2: #3B4252;
+    --color3: #434C5E;
+    --color4: #4C566A;
+    --color5: #D8DEE9;
+    --color6: #E5E9F0;
+    --color7: #ECEFF4;
+    --color8: #8FBCBB;
+    --color9: #88C0D0;
+    --color10: #81A1C1;
+    --color11: #5E81AC;
+    --color12: #BF616A;
+    --color13: #D08770;
+    --color14: #EBCB8B;
+    --color15: #A3BE8C;
+    --color16: #B48EAD;
+
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: var(--color7);
+    font-family: 'Baloo Thambi 2';
+}
+
+body {
+    background-color: var(--color1);
+
+}
+
+/*Navbar*/
+._nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 55px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .2);
+    background: var(--color4);
+    overflow-x: auto;
+    z-index: 999;
+}
+
+._nav-link {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    white-space: nowrap;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    color: var(--color3);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .1s ease-in-out;
+}
+
+._nav-link:hover {
+    background: var(--color2);
+    text-decoration: none;
+}
+
+._nav-link-active .material-icons,
+._nav-link-active ._nav-text {
+    color: var(--color10);
+}
+
+/*Header*/
+.header {
+
+    margin: 40px auto 15px;
+    border-bottom: 2px solid var(--color10);
+}
+
+.header h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.header h6 {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+.header form .form-group {
+    display: flex;
+}
+
+.header form select {
+    border: none;
+    margin-right: .5rem;
+    height: 2.5rem;
+    padding: .5rem;
+    border-radius: 5px;
+    outline: none;
+    background-color: var(--color7);
+    color: var(--color1);
+    font-size: 16px;
+    width: 100%;
+}
+
+.header form option {
+    color: var(--color1);
+    background-color: var(--color7);
+    outline: none;
+}
+
+.header form .search {
+    border: none;
+    margin-right: .5rem;
+    height: 2.5rem;
+    padding: .5rem;
+    border-radius: 5px;
+    width: 100%;
+    background-color: var(--color7);
+    color: var(--color1);
+    outline: none;
+    font-size: 16px;
+}
+
+.header form .search::placeholder {
+    color: var(--color1);
+}
+
+.header form .btn.tambah {
+    background: var(--color15);
+    color: var(--color7);
+    width: 2.5rem;
+    height: 2.5rem;
+    padding-top: 8px;
+    outline: none;
+}
+
+.btn.danger {
+    background: var(--color12);
+}
+
+.btn-infox {
+    background: var(--color9);
+    border: none;
+}
+
+.btn-infox:focus,
+.btn-infox:active,
+.btn-infox:visited {
+    background: var(--color9);
+    border: none;
+    box-shadow: none;
+}
+
+.btn.danger:focus {
+    box-shadow: none;
+}
+
+.header form .btn.tambah:focus {
+    box-shadow: none;
+}
+
+.header form .btn.caris {
+    background: var(--color11);
+    color: var(--color7);
+    width: 2.5rem;
+    height: 2.5rem;
+    padding-top: 8px;
+    outline: none;
+    margin-right: 7.5px;
+}
+
+.header form .btn.caris:focus {
+    box-shadow: none;
+}
+
+.header form .btn.filters {
+    background: var(--color11);
+    color: var(--color7);
+    width: 2.5rem;
+    height: 2.5rem;
+    padding-top: 8px;
+    outline: none;
+    margin-right: 7.5px;
+}
+
+.header form .btn.filters:focus {
+    box-shadow: none;
+}
+
+/*Content*/
+
+.konten {
+    font-family: 'Baloo Thambi 2';
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 80px;
+}
+
+.konten select {
+    border: none;
+    width: auto;
+    height: 2.5rem;
+    padding: .5rem;
+    border-radius: 5px;
+    margin-bottom: 25px;
+    outline: none;
+    background-color: var(--color7);
+    color: var(--color1);
+    font-size: 16px;
+    width: 100%;
+}
+
+.konten option {
+    color: var(--color1);
+    background-color: var(--color7);
+    outline: none;
+}
+
+.konten .btn-print {
+    background: var(--color11);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.konten .btn-print .print-icon {
+    font-size: 30px;
+    color: var(--color7);
+}
+
+.konten .btn-print span {
+    margin-left: .25rem;
+    font-size: 18px;
+}
+
+.konten .list {
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.list .item {
+    height: 40px;
+}
+
+.list .item .item-swipe {
+    background: var(--color3);
+    padding: 10px;
+    z-index: 1;
+}
+
+.list .item .item-swipex {
+    background: var(--color3);
+    padding: 10px;
+    z-index: 1;
+    color: var(--color7);
+    text-decoration: inherit;
+    text-transform: capitalize;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.list .item .item-swipe.open {
+    background: var(--color3);
+}
+
+.list .item .item-swipe.open:before {
+    content: "\e14c";
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: var(--color16);
+    position: absolute;
+    right: 10px;
+    top: 8px;
+}
+
+.list .item a.item-swipe {
+    color: var(--color7);
+    text-decoration: inherit;
+    text-transform: capitalize;
+}
+
+.list .item a.item-swipe:active {
+    color: inherit;
+}
+
+.list .item .item-back {
+    background: var(--color3);
+    padding: 10px;
+    text-align: right;
+    border-radius: 5px;
+}
+
+.list .item .item-back .action {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 48px;
+    border: none;
+    outline: inherit;
+    color: var(--color7);
+    padding: 7px 0 0 0;
+    font-size: 22px;
+}
+
+
+.list .item .item-back .action.first {
+    right: 0;
+
+}
+
+.list .item .item-back .action.second {
+    right: 50px;
+}
+
+.list .item .item-back .action.third {
+    right: 100px;
+}
+
+.btn-delete {
+    background: var(--color12);
+    outline: var(--color1);
+}
+
+.btn-edit {
+    background: var(--color14);
+}
+
+.btn-detail {
+    background: var(--color11);
+}
+
+.modal-backdrop {
+    background-color: var(--color3);
+    backdrop-filter: blur(5px);
+}
+
+
+.fade {
+    transition: .2s linear;
+}
+
+.modal-content {
+    background: var(--color1);
+    color: var(--color7);
+    border-radius: 5px;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-header h4 {
+    font-family: 'Poppins', sans-serif;
+    margin: auto;
+    color: var(--color7);
+}
+
+.form-control {
+    margin-right: .5rem;
+    height: 2.5rem;
+    padding: .5rem;
+    border-radius: 5px;
+    width: 100%;
+    background-color: var(--color1);
+    color: var(--color10);
+    outline: none;
+    font-size: 16px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    background-color: var(--color1);
+    color: var(--color7);
+}
+
+.btn-success {
+    background-color: var(--color15);
+    color: var(--color7);
+    border: 1px solid var(--color15);
+    outline: none;
+}
+
+.btn-success:focus {
+    background-color: var(--color3);
+    box-shadow: none;
+    border: 1px solid var(--color3);
+}
+
+.btn-success:link {
+    background-color: var(--color3);
+    box-shadow: none;
+    border: 1px solid var(--color3);
+}
+
+.btn-danger {
+    background-color: var(--color12);
+    color: var(--color7);
+    border: 1px solid var(--color12);
+    outline: none;
+}
+
+#danger {
+    margin-left: 10px;
+}
+
+.bottom-button {
+    text-align: right;
+    margin-right: 15px;
+    margin-top: 40px;
+}
+
+.card {
+    background-color: var(--color3);
+    border-radius: 10px;
+}
+
+.konten .form-group select {
+    background-color: var(--color1);
+    color: var(--color10);
+    border: 1px solid var(--color7);
+}
+
+.konten form .btn.ganti {
+    background: var(--color11);
+    color: var(--color7);
+    width: 100%;
+    height: 2.5rem;
+    padding-top: 8px;
+    outline: none;
+    margin-right: 7.5px;
+}
+
+.konten .card-header .profile {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 6px solid var(--color3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+}
+
+.konten form .fields {
+    background: transparent;
+    border: none;
+    outline: none;
+    height: 15px;
+    color: var(--color5);
+    text-align: center;
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--color10);
+    padding-bottom: 20px;
+    margin-top: -10px;
+    border-radius: 0;
+}
+
+.konten form .fields-ket {
+    background: transparent;
+    outline: none;
+    color: var(--color5);
+    text-align: justify;
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--color10);
+    padding-bottom: 20px;
+    margin-top: -10px;
+    border-radius: 0;
+}
+
+.xlxx {
+    color: var(--color5);
+    text-align: justify;
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--color10);
+    border-radius: 0;
+}
+
+.konten form .fields:focus {
+    color: var(--color5);
+}
+
+.konten form .btn.ganti:focus {
+    box-shadow: none;
+}
+
+.konten form .bb {
+    border: 1px solid var(--color1);
+    margin-top: 7.5px;
+}
+
+.konten form .btn.ganti .fa-key {
+    margin-right: 5px;
+}
+
+.konten form .btn.keluar {
+    background: var(--color12);
+    color: var(--color7);
+    width: 100%;
+    height: 2.5rem;
+    padding-top: 8px;
+    outline: none;
+    margin-right: 7.5px;
+}
+
+.konten form .btn.keluar:focus {
+    box-shadow: none;
+}
+
+.jamke {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    float: left;
+}
+
+.mapel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.form-control.m-inputx {
+    flex: 1;
+    text-align-last: center;
+}
+
+#addRow {
+    background-color: var(--color11);
+    border: 5px solid var(--color7);
+}
+
+#addRow:focus {
+    box-shadow: none;
+}
+
+.form-control.m-input {
+    flex: 3;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    margin-bottom: -20px;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: var(--color1);
+    text-align: center;
+    width: 100px;
+    color: var(--color1);
+    border: none;
+    margin-right: 140px;
+}
+
+.pagination .page-item .page-link {
+    background-color: var(--color11);
+    text-align: center;
+    width: 100px;
+    border-radius: 5px;
+    border: none;
+    color: var(--color7);
+}
+
+.kelas-select {
+    margin-right: .5rem;
+    height: 2.5rem;
+    padding: .5rem;
+    border-radius: 5px;
+    width: 100%;
+    background-color: var(--color1);
+    color: var(--color7);
+    outline: none;
+    font-size: 16px;
+    border: 1px solid var(--color7);
+}
+
+
+.show {
+    display: block;
+}
+
+.konten-data {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 30px;
+}
+
+.konten-data .isi-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-decoration: none;
+}
+
+.konten-data .isi-data .fa-user-graduate {
+    font-size: 50px;
+}
+
+.konten-data .isi-data .fa-user-tie {
+    font-size: 50px;
+}
+
+.konten-data .isi-data span {
+    font-size: 20px;
+    /* user-select: none; */
+}
+
+.error {
+    background-color: var(--color12);
+    text-align: center;
+    position: fixed;
+    left: 9%;
+    margin-top: -170px;
+    width: 350px;
+}
+
+.swal-modal {
+    background-color: #3B4252;
+}
+
+.swal-title {
+    margin: 0px;
+    color: var(--color12);
+    margin-bottom: 28px;
+}
+
+.swal-text {
+    color: var(--color7);
+}
