@@ -19,59 +19,112 @@ class JurnalController extends Controller
 {
     private $jamke;
     public function __construct()
-    {
+
         $dt =Carbon::now();
-        $jam = $dt->isoFormat('HHmm');
-        if ($jam > '0700' & $jam <= '0745') {
-            $this->jamke = 1;
+        $hari = $dt->isoFormat('dddd');
+        if ($hari == "Saturday" | $hari == "Sunday") {
+            $this->jamke = 'home';
         }
-        elseif ($jam > '0745' & $jam <= '0830') {
-            $this->jamke = 2;
+        elseif ($hari == "Friday") {
+            $jam = $dt->isoFormat('HHmm');
+            if ($jam > '0700' & $jam <= '0745') {
+                $this->jamke = 1;
+            }
+            elseif ($jam > '0745' & $jam <= '0830') {
+                $this->jamke = 2;
+            }
+            elseif ($jam > '0830' & $jam <= '0915') {
+                $this->jamke = 3;
+            }
+            elseif ($jam > '0915' & $jam <= '0930') {
+                $this->jamke = "break";
+            }
+            elseif ($jam > '0930' & $jam <= '1015') {
+                $this->jamke = 4;
+            }
+            elseif ($jam > '1015' & $jam <= '1100') {
+                $this->jamke = 5;
+            }
+            elseif ($jam > '1100' & $jam <= '1145') {
+                $this->jamke = 6;
+            }
+            elseif ($jam > '1145' & $jam <= '1215') {
+                    $this->jamke = "break";
+            }
+            elseif ($jam > '1215' & $jam <= '1300') {
+                $this->jamke = 7;
+            }
+            elseif ($jam > '1300' & $jam <= '1340') {
+                $this->jamke = 8;
+            }
+            else {
+                $this->jamke = "home";
+            }
         }
-        elseif ($jam > '0830' & $jam <= '0915') {
-            $this->jamke = 3;
-        }
-        elseif ($jam > '0915' & $jam <= '0930') {
-            $this->jamke = "break";
-        }
-        elseif ($jam > '0930' & $jam <= '1015') {
-            $this->jamke = 4;
-        }
-        elseif ($jam > '1015' & $jam <= '1100') {
-            $this->jamke = 5;
-        }
-        elseif ($jam > '1100' & $jam <= '1145') {
-            $this->jamke = 6;
-        }
-        elseif ($jam > '1145' & $jam <= '1215') {
-            $this->jamke = "break";
-        }
-        elseif ($jam > '1215' & $jam <= '1300') {
-            $this->jamke = 7;
-        }
-        elseif ($jam > '1300' & $jam <= '1345') {
-            $this->jamke = 8;
-        }
-        elseif ($jam > '1345' & $jam <= '1430') {
-            $this->jamke = 9;
-        }
-        elseif ($jam > '1430' & $jam <= '1500') {
-            $this->jamke = 10;
-        }
-        elseif ($jam > '1500' & $jam <= '1515') {
-            $this->jamke = "break";
-        }
-        elseif ($jam > '1515' & $jam <= '1600') {
-            $this->jamke = 11;
-        }
-        else {
-            $this->jamke = "home";
+        else{
+            $jam = $dt->isoFormat('HHmm');
+            if ($jam > '0700' & $jam <= '0745') {
+                if ($hari == "Monday") {
+                    $this->jamke = "break";
+                }
+                else{
+                    $this->jamke = 1;
+                }
+            }
+            elseif ($jam > '0745' & $jam <= '0830') {
+                if ($hari == "Monday") {
+                    $this->jamke = "break";
+                }
+                else{
+                    $this->jamke = 2;
+                }
+            }
+            elseif ($jam > '0830' & $jam <= '0915') {
+                $this->jamke = 3;
+            }
+            elseif ($jam > '0915' & $jam <= '0930') {
+                $this->jamke = "break";
+            }
+            elseif ($jam > '0930' & $jam <= '1015') {
+                $this->jamke = 4;
+            }
+            elseif ($jam > '1015' & $jam <= '1100') {
+                $this->jamke = 5;
+            }
+            elseif ($jam > '1100' & $jam <= '1145') {
+                $this->jamke = 6;
+            }
+            elseif ($jam > '1145' & $jam <= '1215') {
+                    $this->jamke = "break";
+            }
+            elseif ($jam > '1215' & $jam <= '1300') {
+                $this->jamke = 7;
+            }
+            elseif ($jam > '1300' & $jam <= '1340') {
+                $this->jamke = 8;
+            }
+            elseif ($jam > '1340' & $jam <= '1420') {
+                $this->jamke = 9;
+            }
+            elseif ($jam > '1420' & $jam <= '1500') {
+                $this->jamke = 10;
+            }
+            elseif ($jam > '1500' & $jam <= '1515') {
+                $this->jamke = "break";
+            }
+            elseif ($jam > '1515' & $jam <= '1600') {
+                $this->jamke = 11;
+            }
+            else {
+                $this->jamke = "home";
+            }
         }
     }
 
     public function index(Request $req,Jurnal $jurnal)
     {
         $dt =Carbon::now();
+        $today = $dt->toDateString();
         $mpl = Mapel::orderBy('mapel','asc')->get();
         $gr = Guru::all();
         $kelas = Auth::user()->kelas_id;
@@ -105,7 +158,7 @@ class JurnalController extends Controller
             }
         }
         $jam = $this->jamke;
-        return view('Jurnal.index', compact('jurnal','mpl','gr','jam','siswa','dx','cls'));
+        return view('Jurnal.index', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
     }
 
     public function createp(Request $req)
@@ -222,7 +275,6 @@ class JurnalController extends Controller
             alert()->error('','Batas Hapus Kadaluarsa')->background('#3B4252')->autoClose(2000);
             return redirect()->back();
         }
-
     }
 
     public function bulanan(Request $req,Jurnal $jurnal)

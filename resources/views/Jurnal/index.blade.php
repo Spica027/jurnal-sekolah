@@ -100,9 +100,15 @@ Data Siswa | Journal
         <div class="list">
             <div class="item">
                 <a class="item-swipex" href="#">
+                    @if ($today == $dx)
                     <center>
                         Jurnal Hari ini Kosong
                     </center>
+                    @else
+                    <center>
+                        Jurnal Tanggal {{$dx}} Kosong
+                    </center>
+                    @endif
                 </a>
             </div>
         </div>
