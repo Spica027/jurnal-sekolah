@@ -18,9 +18,8 @@ use DB;
 class JurnalController extends Controller
 {
     private $jamke;
-    public function __construct()
-
-        $dt =Carbon::now();
+    public function __construct(){
+        $dt = Carbon::now();
         $hari = $dt->isoFormat('dddd');
         if ($hari == "Saturday" | $hari == "Sunday") {
             $this->jamke = 'home';
