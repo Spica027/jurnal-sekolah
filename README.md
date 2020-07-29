@@ -6,3 +6,7 @@ Journal merupakan aplikasi jurnal belajar yang dapat digunakan untuk memepermuda
 
 - [Biaz Prasastha Dwisukma](https://github.com/BiazPrasastha/) 
 - [Wira Megantara Pamungkas](https://github.com/Spica027/)
+
+### Special Thanks to
+
+- Allah SWT
