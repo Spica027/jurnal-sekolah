@@ -79,23 +79,38 @@ Data Siswa | Journal
                         <div class="modal-dialog modal-sm modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title" id="myModal">Navigasi Jurnal</h4>
+                                    {{-- <h4 class="modal-title" id="myModal">Navigasi Jurnal</h4> --}}
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group text-center">
-                                        <button class="btn btn-detail mr-2" type="button">
+                                    <div class="form-group text-center" style="display: flex">
+                                        <button class="btn btn-detail mr-2" type="button" style="flex: 1;">
                                             <a href="/jurnal/{{$jurnals->id}}/info">
                                                 <span class="material-icons">info</span>
+                                                <div class="link-action">
+                                                    <h6>
+                                                        Detail
+                                                    </h6>
+                                                </div>
                                             </a>
                                         </button>
-                                        <button class="btn btn-acc mr-2" type="button">
+                                        <button class="btn btn-acc mr-2" type="button" style="flex: 1;">
                                             <a href="/jurnal/{{$jurnals->id}}/edit">
                                                 <span class="material-icons">assignment_turned_in</span>
+                                                <div class="link-action">
+                                                    <h6>
+                                                        Accept
+                                                    </h6>
+                                                </div>
                                             </a>
                                         </button>
-                                        <button class="btn btn-delete delete-confirm" type="button">
+                                        <button class="btn btn-edit delete-confirm" type="button" style="flex: 1;">
                                             <a href="/jurnal/{{$jurnals->id}}/edit">
                                                 <span class="material-icons">edit</span>
+                                                <div class="link-action">
+                                                    <h6>
+                                                        Edit
+                                                    </h6>
+                                                </div>
                                             </a>
                                         </button>
                                     </div>
@@ -154,87 +169,6 @@ Data Siswa | Journal
                 <h5>Jurnal Terverifikasi</h5>
                 <span class="mb-3"></span>
             </div>
-
-            @forelse ($jurnal as $jurnals)
-            <div class="list">
-                <div class="item">
-                    @if (Auth::user()->role == 1)
-                    <a class="item-swipe itemDesk" href="#navCtrl" data-toggle="modal">
-                        <div class="jamke">
-                            {{$jurnals->jam}}
-                        </div>
-                        <div class="mapel">{{$jurnals->mapel->mapel}}</div>
-                    </a>
-                    <div class="modal fade" id="navCtrl" tabindex="-1" role="modal" aria-labelledby="myModal"
-                        width="100%">
-                        <div class="modal-dialog modal-sm modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="myModal">Navigasi Jurnal</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group text-center">
-                                        <button class="btn btn-detail mr-2" type="button">
-                                            <a href="/jurnal/{{$jurnals->id}}/info">
-                                                <span class="material-icons">info</span>
-                                            </a>
-                                        </button>
-                                        <button class="btn btn-acc mr-2" type="button">
-                                            <a href="/jurnal/{{$jurnals->id}}/edit">
-                                                <span class="material-icons">assignment_turned_in</span>
-                                            </a>
-                                        </button>
-                                        <button class="btn btn-delete delete-confirm" type="button">
-                                            <a href="/jurnal/{{$jurnals->id}}/edit">
-                                                <span class="material-icons">edit</span>
-                                            </a>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <a class="item-swipe swipe-two itemMobile" href="/jurnal/{{$jurnals->id}}/info">
-                        <div class="jamke">
-                            {{$jurnals->jam}}
-                        </div>
-                        <div class="mapel">{{$jurnals->mapel->mapel}}</div>
-                    </a>
-                    <div class="item-back">
-                        <button class="action second btn-acc" type="button">
-                            <a href="/jurnal/{{$jurnals->id}}/edit">
-                                <span class="material-icons">assignment_turned_in</span>
-                            </a>
-                        </button>
-                        <button class="action first btn-edit" type="button">
-                            <a href="/jurnal/{{$jurnals->id}}/edit">
-                                <span class="material-icons">edit</span>
-                            </a>
-                        </button>
-                    </div>
-                    @else
-                    <a class="item-swipex" href="/jurnal/{{$jurnals->id}}/info">
-                        <div class="jamke">
-                            {{$jurnals->jam}}
-                            - {{$jurnals->kelas->kelas}}
-                        </div>
-                        <div class="mapel">{{$jurnals->mapel->mapel}}</div>
-                    </a>
-                    @endif
-                </div>
-            </div>
-            @empty
-            <div class="list">
-                <div class="item">
-                    <a class="item-swipex" href="#">
-                        <center>
-                            Jurnal Hari ini Kosong
-                        </center>
-                    </a>
-                </div>
-            </div>
-            @endforelse
             @if (Auth::user()->role == 2)
             {{$jurnal->links()}}
             @endif

@@ -157,7 +157,15 @@ class JurnalController extends Controller
             }
         }
         $jam = $this->jamke;
-        return view('Jurnal.index', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
+        if (Auth::user()->role == 1) {
+            return view('Jurnal.index[ketua]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
+        }
+        elseif (Auth::user()->role == 2) {
+            return view('Jurnal.index[admin]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
+        }
+        elseif (Auth::user()->role == 3) {
+            return view('Jurnal.index[guru]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
+        }
     }
 
     public function createp(Request $req)
