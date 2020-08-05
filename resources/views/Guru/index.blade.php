@@ -4,7 +4,7 @@
 Data Siswa | Journal
 @endsection
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <!-- Header -->
     <div class="header">
         <h3>Data Guru</h3>
@@ -31,7 +31,31 @@ Data Siswa | Journal
             <div class="item">
 
                 @if (Auth::user()->role == "2")
-                <a class="item-swipe" href="#"> {{$gurus->kode}}. {{$gurus->nama}}</a>
+                <a class="item-swipe itemDesk" href="#navCtrl" data-toggle="modal">{{$gurus->id}}. {{$gurus->nama}}</a>
+                <div class="modal fade" id="navCtrl" tabindex="-1" role="modal" aria-labelledby="myModal" width="100%">
+                    <div class="modal-dialog modal-sm modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModal">Navigasi Jurnal</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group text-center">
+                                    <button class="btn btn-edit" type="button">
+                                        <a href="guru/{{$gurus->id}}/edit">
+                                            <span class="material-icons">edit</span>
+                                        </a>
+                                    </button>
+                                    <button class="btn btn-delete" type="button">
+                                        <a href="guru/{{$gurus->id}}/delete">
+                                            <span class="material-icons">delete</span>
+                                        </a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="item-swipe itemMobile swipe-two" href="#"> {{$gurus->id}}. {{$gurus->nama}}</a>
                 <div class="item-back">
                     <button class="action second btn-edit" type="button">
                         <a href="guru/{{$gurus->id}}/edit">
@@ -45,7 +69,7 @@ Data Siswa | Journal
                     </button>
                 </div>
                 @else
-                <a class="item-swipex" href="#"> {{$gurus->kode}} - {{$gurus->nama}}</a>
+                <a class="item-swipex" href="#"> {{$gurus->id}}. {{$gurus->nama}}</a>
                 @endif
             </div>
         </div>
@@ -123,7 +147,7 @@ Data Siswa | Journal
                     </h4>
                 </div>
                 <div class="modal-body">
-                    <div class="container">
+                    <div class="container" style="width: 100%">
                         <div class="konten-data mb-3">
                             <div class="card">
                                 <div class="card-body">

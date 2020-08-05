@@ -57,8 +57,14 @@ class LoginController extends Controller
         $user->password = Hash::make($req->pass);
         $user->role = 1;
         $user->kelas_id = $req->kelas;
-        $user->save();
-        alert()->success('','User Berhasil Terdaftar')->background('#3B4252')->autoClose(1700);
+        $valid = User::where('kelas_id',$req->kelas)->first();
+        if ($valid == null) {
+            $user->save();
+            alert()->success('','User Berhasil Terdaftar')->background('#3B4252')->autoClose(1700);
+        }
+        else {
+            alert()->error('','Proses Pendafataran Gagal, Ketua Kelas Sudah Terdaftar')->background('#3B4252')->autoClose(1700);
+        }
         return redirect()->back();
     }
     public function logout()

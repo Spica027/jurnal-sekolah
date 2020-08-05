@@ -15,7 +15,7 @@ Login | Journal
 		</div> -->
 
         <!-- Content -->
-        <div class="konten" style="margin-top: 50%">
+        <div class="konten" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             <div class="col-lg-12">
                 <div class="card mx-auto">
                     <div class="card-header">

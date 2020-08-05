@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGurusTable extends Migration
+class CreateJurnalSiswaForeignKey extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateGurusTable extends Migration
      */
     public function up()
     {
-        Schema::create('gurus', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->timestamps();
+        Schema::table('jurnal_siswa', function (Blueprint $table) {
+
+            $table->foreign('jurnal_id')->references('id')->on('jurnal');
+            $table->foreign('siswa_id')->references('id')->on('siswa');
         });
     }
 
@@ -26,6 +27,8 @@ class CreateGurusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gurus');
+        Schema::table('jurnal_siswa', function (Blueprint $table) {
+            //
+        });
     }
 }

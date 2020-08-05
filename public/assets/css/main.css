@@ -347,6 +347,10 @@ body {
     background: var(--color11);
 }
 
+.btn-acc {
+    background: var(--color15);
+}
+
 .modal-backdrop {
     background-color: var(--color3);
     backdrop-filter: blur(5px);
@@ -650,4 +654,57 @@ body {
 
 .swal-text {
     color: var(--color7);
+}
+
+.top {
+    display: flex;
+    flex-direction: column;
+}
+
+.top span {
+    height: 2px;
+    width: 100%;
+    background: #fff;
+}
+
+.top h5 {
+    font-size: 20px;
+}
+
+.container {
+    width: 60%;
+}
+
+.itemMobile {
+    display: none;
+}
+
+.item-back {
+    display: none;
+}
+
+@media only screen and (max-width: 600px) {
+    .konten {
+        width: 100%;
+    }
+
+    .container {
+        width: 100%;
+    }
+
+    .itemMobile {
+        display: block;
+    }
+
+    .item-back {
+        display: block;
+    }
+
+    .itemDesk {
+        display: none;
+    }
+
+    #navCtrl {
+        display: none;
+    }
 }

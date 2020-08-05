@@ -6,7 +6,7 @@ Data Guru | Journal
 
 @section('content')
 
-<div class="container-fluid">
+<div class="container">
     <!-- Header -->
     <div class="header" style="border-bottom: none;">
         <h3>

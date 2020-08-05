@@ -8,7 +8,7 @@ use App\Mapel;
 class Jurnal extends Model
 {
     protected $table = 'jurnal';
-    protected $fillable = ['kelas','jam','tanggal','id_mapel','id_guru','materi','keterangan','absensi'];
+    protected $fillable = ['kelas','jam','tanggal','id_mapel','id_guru','materi','keterangan','absensi','valid'];
 
     public function mapel()
     {

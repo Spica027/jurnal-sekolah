@@ -67,9 +67,29 @@
 
 			return false;
 		}
+
         $(function () {
             $('.item-swipe').swipeTo({
                 minSwipe: 150,
+                angle: 10,
+                wrapScroll: 'body',
+                binder: true,
+                swipeStart: function () {
+                    console.log('start');
+                },
+                swipeMove: function () {
+                    console.log('move');
+                },
+                swipeEnd: function () {
+                    console.log('end');
+                },
+            });
+            getIe();
+		});
+
+		$(function () {
+            $('.item-swipe.swipe-two').swipeTo({
+                minSwipe: 100,
                 angle: 10,
                 wrapScroll: 'body',
                 binder: true,
