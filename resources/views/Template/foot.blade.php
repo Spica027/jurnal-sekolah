@@ -106,6 +106,24 @@
             getIe();
         });
 
+        $(function () {
+            $('.item-swipe.swipe-one').swipeTo({
+                minSwipe: 50,
+                angle: 10,
+                wrapScroll: 'body',
+                binder: true,
+                swipeStart: function () {
+                    console.log('start');
+                },
+                swipeMove: function () {
+                    console.log('move');
+                },
+                swipeEnd: function () {
+                    console.log('end');
+                },
+            });
+            getIe();
+        });
 </script>
 </body>
 

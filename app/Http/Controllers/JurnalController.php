@@ -126,10 +126,10 @@ class JurnalController extends Controller
         $today = $dt->toDateString();
         $mpl = Mapel::orderBy('mapel','asc')->get();
         $gr = Guru::all();
-        $kelas = Auth::user()->kelas_id;
-        $siswa = Siswa::where('kelas_id','=',$kelas)->get();
-        $kls = Kelas::find($kelas);
         $cls = Kelas::all();
+        $kelas = Auth::user()->kelas_id;
+        $kls = Kelas::find($kelas);
+        $siswa = Siswa::where('kelas_id','=',$kelas)->get();
         if (Auth::user()->role == 1){
             if ($req->has('date') ) {
                 $jurnal = Jurnal::with('mapel')
@@ -144,7 +144,7 @@ class JurnalController extends Controller
                 $dx =$dt->toDateString();
             }
         }
-        else {
+        elseif(Auth::user()->role == 2) {
             if ($req->has('date') ) {
                 $jurnal = Jurnal::with('mapel')
                 ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->simplePaginate(10);
@@ -156,6 +156,22 @@ class JurnalController extends Controller
                 $dx =$dt->toDateString();
             }
         }
+        elseif(Auth::user()->role == 3){
+            if ($req->has('date') ) {
+                $jurnal_valid = Jurnal::with('mapel')
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 1)->simplePaginate(10);
+                $jurnal_invalid = Jurnal::with('mapel')
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 0)->simplePaginate(10);
+                $dx =$req->date;
+                $jurnal->appends(['date' => $req->date]);
+            }else{
+                $jurnal_valid = Jurnal::with('mapel')
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 1)->simplePaginate(10);
+                $jurnal_invalid = Jurnal::with('mapel')
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 0)->simplePaginate(10);
+                $dx =$dt->toDateString();
+            }
+        }
         $jam = $this->jamke;
         if (Auth::user()->role == 1) {
             return view('Jurnal.index[ketua]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
@@ -164,11 +180,11 @@ class JurnalController extends Controller
             return view('Jurnal.index[admin]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
         }
         elseif (Auth::user()->role == 3) {
-            return view('Jurnal.index[guru]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
+            return view('Jurnal.index[guru]', compact('mpl','gr','jam','siswa','dx','cls','today','jurnal_valid','jurnal_invalid'));
         }
     }
 
-    public function createp(Request $req)
+    public function createpk(Request $req)
     {
         //Variabel
         $dt =Carbon::now();
@@ -187,6 +203,31 @@ class JurnalController extends Controller
 
         //Validasi
         $valid = Jurnal::where('jam', '=',$this->jamke)->where('tanggal', '=', $dt->toDateString())->where('kelas_id', '=', $kls->id)->first();
+        if ($valid == null) {
+            $jurnal->save();
+            return redirect('/jurnal');
+        }
+        else{
+            return redirect()->back();
+        }
+    }
+
+    public function createpg(Request $req)
+    {
+        $dt =Carbon::now();
+        $guru = Auth::user()->guru_id;
+
+        $jurnal = new Jurnal();
+        $jurnal->kelas_id = $req->kelas;
+        $jurnal->tanggal = $dt->toDateString();
+        $jurnal->jam = $this->jamke;
+        $jurnal->mapel_id = $req->mapel;
+        $jurnal->guru_id = $guru;
+        $jurnal->materi = $req->materi;
+        $jurnal->keterangan = $req->keterangan;
+        $jurnal->valid = 0;
+
+        $valid = Jurnal::where('jam', '=', $this->jamke)->where('tanggal', '=', $dt->toDateString())->where('kelas_id', '=', $req->kelas)->first();
         if ($valid == null) {
             $jurnal->save();
             return redirect('/jurnal');
