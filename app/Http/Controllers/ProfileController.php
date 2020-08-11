@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Kelas;
 use App\User;
+use App\Guru;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,11 +19,16 @@ class ProfileController extends Controller
         if (Auth::user()->role==2) {
             $role = "Admin";
             $kelas = "Kelas Atas";
-        } else {
+        } elseif(Auth::user()->role==1) {
             $role = "Ketua Kelas";
             $y = Auth::user()->kelas_id;
             $z = Kelas::find($y);
             $kelas = $z->kelas;
+        }
+        elseif (Auth::user()->role==3) {
+            $role = "Guru";
+            $kelas = Guru::where('id','=',Auth::user()->guru_id)->first();
+            $kelas = $kelas->nama;
         }
 
         return view('Auth.profile',compact('role','kelas','cls'));

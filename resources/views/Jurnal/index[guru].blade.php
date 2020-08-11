@@ -35,10 +35,12 @@ Data Siswa
             <i class="material-icons print-icon">print</i> <span>Print PDF</span>
         </a>
         <div class="unverify mb-4">
+            @if (!$jurnal_invalid->isEmpty())
             <div class="top">
                 <h5>Jurnal Belum Terverifikasi</h5>
                 <span class="mb-3"></span>
             </div>
+            @endif
             @forelse ($jurnal_invalid as $jurnals)
             <div class="list">
                 <div class="item">
@@ -66,8 +68,18 @@ Data Siswa
                                                 </div>
                                             </a>
                                         </button>
-                                        <button class="btn btn-acc delete-confirm" type="button" style="flex: 1;">
-                                            <a href="/jurnal/{{$jurnals->id}}/edit">
+                                        <button class="btn btn-delete mr-2" type="button" style="flex: 1;">
+                                            <a href="/jurnal/{{$jurnals->id}}/delete">
+                                                <span class="material-icons">delete</span>
+                                                <div class="link-action">
+                                                    <h6>
+                                                        Delete
+                                                    </h6>
+                                                </div>
+                                            </a>
+                                        </button>
+                                        <button class="btn btn-acc mr-2" type="button" style="flex: 1;">
+                                            <a href="/jurnal/{{$jurnals->id}}/add-absen">
                                                 <span class="material-icons">person</span>
                                                 <div class="link-action">
                                                     <h6>
@@ -81,14 +93,19 @@ Data Siswa
                             </div>
                         </div>
                     </div>
-                    <a class="item-swipe swipe-one itemMobile" href="/jurnal/{{$jurnals->id}}/info">
+                    <a class="item-swipe swipe-two itemMobile" href="/jurnal/{{$jurnals->id}}/info">
                         <div class="jamke">
                             {{$jurnals->jam}} - {{$jurnals->kelas->kelas}}
                         </div>
                         <div class="mapel">{{$jurnals->mapel->mapel}}</div>
                     </a>
                     <div class="item-back">
-                        <button class="action first btn-edit" type="button">
+                        <button class="action first btn-delete" type="button">
+                            <a href="/jurnal/{{$jurnals->id}}/delete">
+                                <span class="material-icons">delete</span>
+                            </a>
+                        </button>
+                        <button class="action second btn-edit" type="button">
                             <a href="/jurnal/{{$jurnals->id}}/edit">
                                 <span class="material-icons">person</span>
                             </a>
@@ -97,15 +114,6 @@ Data Siswa
                 </div>
             </div>
             @empty
-            <div class="list">
-                <div class="item">
-                    <a class="item-swipex" href="#">
-                        <center>
-                            Jurnal Hari ini Kosong
-                        </center>
-                    </a>
-                </div>
-            </div>
             @endforelse
         </div>
 
@@ -142,7 +150,7 @@ Data Siswa
                                             </a>
                                         </button>
                                         <button class="btn btn-acc delete-confirm" type="button" style="flex: 1;">
-                                            <a href="/jurnal/{{$jurnals->id}}/edit">
+                                            <a href="/jurnal/{{$jurnals->id}}/add-absen">
                                                 <span class="material-icons">person</span>
                                                 <div class="link-action">
                                                     <h6>
@@ -156,7 +164,7 @@ Data Siswa
                             </div>
                         </div>
                     </div>
-                    <a class="item-swipe swipe-one itemMobile" href="/jurnal/{{$jurnals->id}}/info">
+                    <a class="item-swipe swipe-two itemMobile" href="/jurnal/{{$jurnals->id}}/info">
                         <div class="jamke">
                             {{$jurnals->jam}} - {{$jurnals->kelas->kelas}}
                         </div>
@@ -166,6 +174,11 @@ Data Siswa
                         <button class="action first btn-edit" type="button">
                             <a href="/jurnal/{{$jurnals->id}}/edit">
                                 <span class="material-icons">person</span>
+                            </a>
+                        </button>
+                        <button class="action second btn-delete" type="button">
+                            <a href="/jurnal/{{$jurnals->id}}/delete">
+                                <span class="material-icons">delete</span>
                             </a>
                         </button>
                     </div>
@@ -182,6 +195,27 @@ Data Siswa
                 </div>
             </div>
             @endforelse
+
+            <div class="modal fade" id="modalx" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" width="100%">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">
+                                Print Jurnal
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/jurnal/print" method="POST">
+                                @csrf
+                                <input class=" form-control" name="bulan" type="month" value="2020-07">
+                                <br>
+                                <button type="submit" class="btn btn-success btn-block">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Modal Section -->
             <div class="modal fade" id="modalscrollable" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -242,25 +276,7 @@ Data Siswa
                 </div>
             </div>
             {{-- end --}}
-            <div class="modal fade" id="modalx" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                aria-hidden="true" width="100%">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="myModalLabel">
-                                Print Jurnal
-                            </h4>
-                        </div>
-                        <div class="modal-body">
-                            <form action="/jurnal/print" method="POST">
-                                @csrf
-                                <input class=" form-control" name="bulan" type="month" value="2020-07">
-                                <button type="submit" class="btn btn-success btn-block">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-    @endsection
+</div>
+@endsection

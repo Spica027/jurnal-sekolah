@@ -40,16 +40,14 @@ Route::group(['middleware' => ['isLogin']], function () {
         });
     });
     route::prefix('jurnal')->group(function(){
+        Route::get('/{id}/edit', 'JurnalController@edit');
+        Route::post('/{id}/edit-post', 'JurnalController@editp');
         Route::group(['middleware' => ['isKetua']], function () {
             Route::post('/create-post', 'JurnalController@createpk');
-            Route::get('/{id}/edit', 'JurnalController@edit');
-            Route::post('/{id}/edit-post', 'JurnalController@editp');
-            Route::post('/{id}/accept', 'JurnalController@acc');
+            Route::get('/{id}/accept', 'JurnalController@acc');
         });
         Route::group(['middleware' => ['isGuru']], function () {
             Route::post('/create-post', 'JurnalController@createpg');
-            Route::get('/{id}/edit', 'JurnalController@edit');
-            Route::post('/{id}/edit-post', 'JurnalController@editp');
             Route::get('/{id}/add-absen', 'JurnalController@add');
             Route::post('/{id}/add-absen-post', 'JurnalController@addp');
             Route::get('/{id}/delete', 'JurnalController@delete');

@@ -93,7 +93,7 @@ Data Siswa | Journal
                                             </a>
                                         </button>
                                         <button class="btn btn-acc mr-2" type="button" style="flex: 1;">
-                                            <a href="/jurnal/{{$jurnals->id}}/edit">
+                                            <a href="/jurnal/{{$jurnals->id}}/accept">
                                                 <span class="material-icons">assignment_turned_in</span>
                                                 <div class="link-action">
                                                     <h6>

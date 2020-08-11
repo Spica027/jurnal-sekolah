@@ -29,12 +29,19 @@ Data Siswa | Journal
                             <input type="text" class="form-control fields" name="roles" value="{{$role}}" readonly>
                             <div class="bb"></div>
                         </div>
-
+                        @if (Auth::user()->role == 3)
+                        <div class="form col-sm-12 mb-4">
+                            <label>Nama :</label>
+                            <input type="text" class="form-control fields" name="klas" value="{{$kelas}}" readonly>
+                            <div class="bb"></div>
+                        </div>
+                        @else
                         <div class="form col-sm-12 mb-4">
                             <label>Kelas :</label>
                             <input type="text" class="form-control fields" name="klas" value="{{$kelas}}" readonly>
                             <div class="bb"></div>
                         </div>
+                        @endif
 
                         <div class="form-group col-lg-12">
                             <button type="button" class="btn ganti mb-2" data-toggle="modal"

@@ -130,6 +130,7 @@ class JurnalController extends Controller
         $kelas = Auth::user()->kelas_id;
         $kls = Kelas::find($kelas);
         $siswa = Siswa::where('kelas_id','=',$kelas)->get();
+        $guru = Auth::user()->guru_id;
         if (Auth::user()->role == 1){
             if ($req->has('date') ) {
                 $jurnal = Jurnal::with('mapel')
@@ -159,16 +160,16 @@ class JurnalController extends Controller
         elseif(Auth::user()->role == 3){
             if ($req->has('date') ) {
                 $jurnal_valid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 1)->simplePaginate(10);
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 1)->where('guru_id', '=', $guru)->simplePaginate(10);
                 $jurnal_invalid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 0)->simplePaginate(10);
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 0)->where('guru_id', '=', $guru)->simplePaginate(10);
                 $dx =$req->date;
                 $jurnal->appends(['date' => $req->date]);
             }else{
                 $jurnal_valid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 1)->simplePaginate(10);
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 1)->where('guru_id', '=', $guru)->simplePaginate(10);
                 $jurnal_invalid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 0)->simplePaginate(10);
+                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 0)->where('guru_id', '=', $guru)->simplePaginate(10);
                 $dx =$dt->toDateString();
             }
         }
@@ -227,12 +228,13 @@ class JurnalController extends Controller
         $jurnal->keterangan = $req->keterangan;
         $jurnal->valid = 0;
 
-        $valid = Jurnal::where('jam', '=', $this->jamke)->where('tanggal', '=', $dt->toDateString())->where('kelas_id', '=', $req->kelas)->first();
+        $valid = Jurnal::where('jam', '=', $this->jamke)->where('tanggal', '=', $dt->toDateString())->first();
         if ($valid == null) {
             $jurnal->save();
             return redirect('/jurnal');
         }
         else{
+            alert()->error('','Jurnal Sudah Ada')->background('#3B4252')->autoClose(2000);
             return redirect()->back();
         }
     }
@@ -241,8 +243,8 @@ class JurnalController extends Controller
     {
         $dt =Carbon::now();
         $dt = $dt->toDateString();
+        $kelas = $id->kelas_id;
         if($dt == $id->tanggal){
-            $kelas = Auth::user()->kelas_id;
             $siswa = Siswa::where('kelas_id','=',$kelas)->get();
             return view('Jurnal.add',compact('id','siswa'));
         }
@@ -286,23 +288,35 @@ class JurnalController extends Controller
     {
         $dt =Carbon::now();
         $dt = $dt->toDateString();
-        if ($dt == $id->tanggal) {
-            $mpl = Mapel::orderBy('mapel','asc')->get();
-            $gr = Guru::all();
-            return view('Jurnal.edit',compact('id','mpl','gr'));
+        if($id->valid == 1){
+            alert()->error('','Eitss Tidak Bisa')->background('#3B4252')->autoClose(2000);
+            return redirect('/jurnal');
         }
-        else{
-            alert()->error('','Batas Edit Kadaluarsa')->background('#3B4252')->autoClose(2000);
-            return redirect()->back();
+        else {
+            if ($dt == $id->tanggal) {
+                $mpl = Mapel::orderBy('mapel','asc')->get();
+                $gr = Guru::all();
+                return view('Jurnal.edit',compact('id','mpl','gr'));
+            }
+            else{
+                alert()->error('','Batas Edit Kadaluarsa')->background('#3B4252')->autoClose(2000);
+                return redirect()->back();
+            }
         }
     }
     public function editp(Request $req,Jurnal $id)
     {
-        $id->fill($req->all());
-        $id->mapel_id = $req->mapel_id;
-        $id->guru_id = $req->guru_id;
-        $id->save();
-        return redirect('/jurnal');
+        if($id->valid == 1 ){
+            alert()->error('','Eitss Tidak Bisa')->background('#3B4252')->autoClose(2000);
+            return redirect('/jurnal');
+        }
+        else {
+            $id->fill($req->all());
+            $id->mapel_id = $req->mapel_id;
+            $id->guru_id = $req->guru_id;
+            $id->save();
+            return redirect('/jurnal');
+        }
     }
 
     public function info(Jurnal $id)
@@ -314,14 +328,20 @@ class JurnalController extends Controller
     {
         $dt =Carbon::now();
         $dt = $dt->toDateString();
-        if ($dt == $id->tanggal) {
-            DB::table('jurnal_siswa')->where('jurnal_id','=',$id->id)->delete();
-            $id->delete();
-            alert()->success('','Jurnal Jam ke - '. $id->id .' Berhasil Dihapus')->background('#3B4252')->autoClose(2000);
-            return redirect()->back();
-        } else {
-            alert()->error('','Batas Hapus Kadaluarsa')->background('#3B4252')->autoClose(2000);
-            return redirect()->back();
+        if ($id->valid == 1) {
+            alert()->error('','Eitss Tidak Bisa')->background('#3B4252')->autoClose(2000);
+            return redirect('/jurnal');
+        }
+        else {
+            if ($dt == $id->tanggal) {
+                DB::table('jurnal_siswa')->where('jurnal_id','=',$id->id)->delete();
+                $id->delete();
+                alert()->success('','Jurnal Jam ke - '. $id->jam . ' - ' .$id->tanggal .' Berhasil Dihapus')->background('#3B4252')->autoClose(2000);
+                return redirect()->back();
+            } else {
+                alert()->error('','Batas Hapus Kadaluarsa')->background('#3B4252')->autoClose(2000);
+                return redirect()->back();
+            }
         }
     }
 
@@ -364,6 +384,7 @@ class JurnalController extends Controller
 
     public function print(Request $req)
     {
+        dd($req->kelas);
         if($req->kelas == 00){
             $jurnal = Jurnal::with('mapel')
             ->with('guru')->with('siswa')->with('kelas')->orderBy('tanggal', 'desc')->where('tanggal', 'LIKE', '%' . $req->bulan . '%')
@@ -409,5 +430,12 @@ class JurnalController extends Controller
         }
         $jam = $this->jamke;
         return view('Jurnal.index', compact('jurnal','mpl','gr','jam','siswa','dx','cls','id'));
+    }
+    public function acc(Jurnal $id)
+    {
+        $id->valid = 1;
+        $id->save();
+        alert()->success('','Jurnal Berhasil Di Accept')->background('#3B4252')->autoClose(2000);
+        return redirect()->back();
     }
 }
