@@ -32,7 +32,8 @@ Data Siswa | Journal
                         @if (Auth::user()->role == 3)
                         <div class="form col-sm-12 mb-4">
                             <label>Nama :</label>
-                            <input type="text" class="form-control fields" name="klas" value="{{$kelas}}" readonly>
+                            <input type="text" class="form-control fields" name="klas" value="{{$kelas}}"
+                                style="margin-top: 5px" readonly>
                             <div class="bb"></div>
                         </div>
                         @else

@@ -4,7 +4,7 @@
 Data Siswa | Journal
 @endsection
 @section('content')
-<div class="container">
+<div class="container" style="margin-bottom: 110px">
     <!-- Header -->
     <div class="header">
         <h3>Data Guru</h3>

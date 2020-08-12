@@ -4,24 +4,26 @@
 Data Siswa | Journal
 @endsection
 @section('content')
-<div class="container">
+<div class="container" style="margin-bottom: 110px">
     <!-- Header -->
     <div class="header">
-        @if (Auth::user()->role == 1)
+        @if (Auth::user()->role == 1 )
         <h3>SISWA KELAS {{$kls->kelas}}</h3>
         @endif
-        @if(Auth::user()->role == "2")
+        @if(Auth::user()->role == 2 || Auth::user()->role == 3)
         <h3>Data Siswa</h3>
         <form action="{{\Request::url()}}" method="GET">
             <div class="form-group">
-                <input type="text" class="search" name="search" placeholder="Mau Cari Siapa?"
+                <input type="text" class="search" name="search" placeholder="Mau Cari Siapa?" autocomplete="off"
                     onfocus="this.placeholder = ''" onblur="this.placeholder = 'Mau Cari Siapa?'" />
                 <button type="submit" class="btn caris">
                     <i class="fas fa-search"></i>
                 </button>
+                @if (Auth::user()->role == 2)
                 <button type="button" class="btn tambah" data-toggle="modal" data-target="#modalscrollable">
                     <i class="fas fa-plus"></i>
                 </button>
+                @endif
             </div>
         </form>
         @endif
@@ -30,12 +32,12 @@ Data Siswa | Journal
     <!-- Content -->
     <div class="konten">
         <!-- Filter Kelas -->
-        @if(Auth::user()->role == "2")
+        @if(Auth::user()->role == "2" || Auth::user()->role == 3)
         <select
             onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
             <option value="">Pilih Kelas</option>
             @forelse ($cls as $kelas)
-            <option value="{{$kelas->id}}">{{$kelas->kelas}}</option>
+            <option value="/siswa/{{$kelas->id}}">{{$kelas->kelas}}</option>
             @empty
             <option value="">Belum Ada Kelas Terdaftar</option>
             @endforelse
@@ -85,7 +87,8 @@ Data Siswa | Journal
                     </button>
                 </div>
                 @else
-                <a class="item-swipex" href="#"> {{$siswas->id}}. {{$siswas->nama}}</a>
+                <a class="item-swipex" href="#"> {{$siswas->id}}@if(Auth::user()->role ==
+                    3)-{{$siswas->kelas->kelas}}@endif. {{$siswas->nama}}</a>
                 @endif
             </div>
         </div>

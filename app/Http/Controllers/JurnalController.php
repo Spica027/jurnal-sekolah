@@ -15,12 +15,14 @@ use App\Guru;
 use Carbon\Carbon;
 use PDF;
 use DB;
+
 class JurnalController extends Controller
 {
     private $jamke;
     public function __construct(){
         $dt = Carbon::now();
         $hari = $dt->isoFormat('dddd');
+
         if ($hari == "Saturday" | $hari == "Sunday") {
             $this->jamke = 'home';
         }
@@ -131,20 +133,49 @@ class JurnalController extends Controller
         $kls = Kelas::find($kelas);
         $siswa = Siswa::where('kelas_id','=',$kelas)->get();
         $guru = Auth::user()->guru_id;
+        $jam = $this->jamke;
+
+        //ketua
         if (Auth::user()->role == 1){
             if ($req->has('date') ) {
-                $jurnal = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('kelas_id', '=',$kls->id )
-                ->get();
+                $jurnal_valid = Jurnal::with('mapel')
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $req->date)
+                    ->where('kelas_id', '=',$kls->id )
+                    ->where('valid','=',1)
+                    ->get();
+                $jurnal_invalid = Jurnal::with('mapel')
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $req->date)
+                    ->where('kelas_id', '=',$kls->id )
+                    ->where('valid','=',0)
+                    ->get();
                 $dx =$req->date;
-
             }else{
-                $jurnal = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('kelas_id', '=',$kls->id )
-                ->get();
+                $jurnal_valid = Jurnal::with('mapel')
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $dt->toDateString())
+                    ->where('kelas_id', '=',$kls->id )
+                    ->where('valid','=',1)
+                    ->get();
+                $jurnal_invalid = Jurnal::with('mapel')
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $dt->toDateString())
+                    ->where('kelas_id', '=',$kls->id )
+                    ->where('valid','=',0)
+                    ->get();
                 $dx =$dt->toDateString();
             }
         }
+        //admin
         elseif(Auth::user()->role == 2) {
             if ($req->has('date') ) {
                 $jurnal = Jurnal::with('mapel')
@@ -157,25 +188,49 @@ class JurnalController extends Controller
                 $dx =$dt->toDateString();
             }
         }
+        //guru
         elseif(Auth::user()->role == 3){
             if ($req->has('date') ) {
                 $jurnal_valid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 1)->where('guru_id', '=', $guru)->simplePaginate(10);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $req->date)
+                    ->where('valid', '=', 1)
+                    ->where('guru_id', '=', $guru)
+                    ->get();
                 $jurnal_invalid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('valid', '=', 0)->where('guru_id', '=', $guru)->simplePaginate(10);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $req->date)
+                    ->where('valid', '=', 0)
+                    ->where('guru_id', '=', $guru)
+                    ->get();
                 $dx =$req->date;
-                $jurnal->appends(['date' => $req->date]);
             }else{
                 $jurnal_valid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 1)->where('guru_id', '=', $guru)->simplePaginate(10);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $dt
+                    ->toDateString())
+                    ->where('valid', '=', 1)
+                    ->where('guru_id', '=', $guru)
+                    ->get();
                 $jurnal_invalid = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('valid', '=', 0)->where('guru_id', '=', $guru)->simplePaginate(10);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $dt->toDateString())
+                    ->where('valid', '=', 0)
+                    ->where('guru_id', '=', $guru)
+                    ->get();
                 $dx =$dt->toDateString();
             }
         }
-        $jam = $this->jamke;
         if (Auth::user()->role == 1) {
-            return view('Jurnal.index[ketua]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
+            return view('Jurnal.index[ketua]', compact('mpl','gr','jam','siswa','dx','cls','today','jurnal_valid','jurnal_invalid'));
         }
         elseif (Auth::user()->role == 2) {
             return view('Jurnal.index[admin]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
@@ -187,12 +242,10 @@ class JurnalController extends Controller
 
     public function createpk(Request $req)
     {
-        //Variabel
         $dt =Carbon::now();
         $kelas = Auth::user()->kelas_id;
         $kls = Kelas::find($kelas);
 
-        //Input Tabel Jurnal
         $jurnal = new Jurnal();
         $jurnal->kelas_id = $kls->id;
         $jurnal->tanggal = $dt->toDateString();
@@ -202,8 +255,10 @@ class JurnalController extends Controller
         $jurnal->materi = $req->materi;
         $jurnal->keterangan = $req->keterangan;
 
-        //Validasi
-        $valid = Jurnal::where('jam', '=',$this->jamke)->where('tanggal', '=', $dt->toDateString())->where('kelas_id', '=', $kls->id)->first();
+        $valid = Jurnal::where('jam', '=',$this->jamke)
+            ->where('tanggal', '=', $dt->toDateString())
+            ->where('kelas_id', '=', $kls->id)
+            ->first();
         if ($valid == null) {
             $jurnal->save();
             return redirect('/jurnal');
@@ -228,7 +283,9 @@ class JurnalController extends Controller
         $jurnal->keterangan = $req->keterangan;
         $jurnal->valid = 0;
 
-        $valid = Jurnal::where('jam', '=', $this->jamke)->where('tanggal', '=', $dt->toDateString())->first();
+        $valid = Jurnal::where('jam', '=', $this->jamke)
+            ->where('tanggal', '=', $dt->toDateString())
+            ->first();
         if ($valid == null) {
             $jurnal->save();
             return redirect('/jurnal');
@@ -244,12 +301,13 @@ class JurnalController extends Controller
         $dt =Carbon::now();
         $dt = $dt->toDateString();
         $kelas = $id->kelas_id;
+
         if($dt == $id->tanggal){
             $siswa = Siswa::where('kelas_id','=',$kelas)->get();
             return view('Jurnal.add',compact('id','siswa'));
         }
         else{
-            alert()->error('','Batas Edit Kadaluarsa')->background('#3B4252')->autoClose(2000);
+            alert()->error('','Batas Absen Kadaluarsa')->background('#3B4252')->autoClose(2000);
             return redirect()->back();
         }
     }
@@ -260,12 +318,16 @@ class JurnalController extends Controller
         $absen = collect($req->absen);
         $keterangan = collect($req->abs);
         $jumlah = $absen->count();
+
         if($keterangan->contains('#')){
             alert()->error('','Lengkapi Keterangan Absensi')->background('#3B4252')->autoClose(2000);
             return redirect()->back();
         }
         else{
-            $valid = DB::table('jurnal_siswa')->where('jurnal_id', $id->id)->where('siswa_id', $req->absen)->first();
+            $valid = DB::table('jurnal_siswa')
+                ->where('jurnal_id', $id->id)
+                ->where('siswa_id', $req->absen)
+                ->first();
             if ($valid == null) {
                 for ($i=0; $i <$jumlah ; $i++) {
                     DB::insert('insert into jurnal_siswa (jurnal_id, siswa_id,keterangan) values (?, ?, ?)', [$id->id,$absen[$i], $keterangan[$i]]);
@@ -274,20 +336,21 @@ class JurnalController extends Controller
                 return redirect('/jurnal');
             }
             else {
-
                 $dx = array_search($valid->siswa_id, $req->absen);
                 DB::table('jurnal_siswa')
-                ->where('id', $valid->id)
-                ->update(['keterangan' => $keterangan[$dx]]);
+                    ->where('id', $valid->id)
+                    ->update(['keterangan' => $keterangan[$dx]]);
                 return redirect('/jurnal');
             }
         }
 
     }
+
     public function edit(Jurnal $id)
     {
         $dt =Carbon::now();
         $dt = $dt->toDateString();
+
         if($id->valid == 1){
             alert()->error('','Eitss Tidak Bisa')->background('#3B4252')->autoClose(2000);
             return redirect('/jurnal');
@@ -296,7 +359,8 @@ class JurnalController extends Controller
             if ($dt == $id->tanggal) {
                 $mpl = Mapel::orderBy('mapel','asc')->get();
                 $gr = Guru::all();
-                return view('Jurnal.edit',compact('id','mpl','gr'));
+                $kls = Kelas::all();
+                return view('Jurnal.edit',compact('id','mpl','gr','kls'));
             }
             else{
                 alert()->error('','Batas Edit Kadaluarsa')->background('#3B4252')->autoClose(2000);
@@ -304,6 +368,7 @@ class JurnalController extends Controller
             }
         }
     }
+
     public function editp(Request $req,Jurnal $id)
     {
         if($id->valid == 1 ){
@@ -313,7 +378,6 @@ class JurnalController extends Controller
         else {
             $id->fill($req->all());
             $id->mapel_id = $req->mapel_id;
-            $id->guru_id = $req->guru_id;
             $id->save();
             return redirect('/jurnal');
         }
@@ -328,13 +392,16 @@ class JurnalController extends Controller
     {
         $dt =Carbon::now();
         $dt = $dt->toDateString();
+
         if ($id->valid == 1) {
             alert()->error('','Eitss Tidak Bisa')->background('#3B4252')->autoClose(2000);
             return redirect('/jurnal');
         }
         else {
             if ($dt == $id->tanggal) {
-                DB::table('jurnal_siswa')->where('jurnal_id','=',$id->id)->delete();
+                DB::table('jurnal_siswa')
+                    ->where('jurnal_id','=',$id->id)
+                    ->delete();
                 $id->delete();
                 alert()->success('','Jurnal Jam ke - '. $id->jam . ' - ' .$id->tanggal .' Berhasil Dihapus')->background('#3B4252')->autoClose(2000);
                 return redirect()->back();
@@ -352,56 +419,80 @@ class JurnalController extends Controller
         $year = Carbon::parse($req->search)->format("Y");
         $kelas = Auth::user()->kelas_id;
         $kls = Kelas::find($kelas);
+
         if (Auth::user()->role == 2) {
             if ($req->has('search')) {
                 $jurnal = Jurnal::with('mapel')
-                            ->with('guru')->with('siswa')->with('kelas')->orderBy('tanggal', 'desc')->where('tanggal', 'LIKE', '%' . $req->search . '%')
-                            ->paginate(15);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->with('kelas')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', 'LIKE', '%' . $req->search . '%')
+                    ->paginate(15);
                 $dt = $req->search;
             }
             else{
                 $jurnal = Jurnal::with('mapel')
-                            ->with('guru')->with('siswa')->with('kelas')->orderBy('tanggal', 'desc')
-                            ->paginate(15);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->with('kelas')
+                    ->orderBy('tanggal', 'desc')
+                    ->paginate(15);
             }
         }
         else {
             if ($req->has('search')) {
                 $jurnal = Jurnal::with('mapel')
-                            ->with('guru')->with('siswa')->with('kelas')->orderBy('tanggal', 'desc')->where('tanggal', 'LIKE', '%' . $req->search . '%')->where('kelas_id', '=', $kls->id)
-                            ->paginate(15);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->with('kelas')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', 'LIKE', '%' . $req->search . '%')
+                    ->where('kelas_id', '=', $kls->id)
+                    ->paginate(15);
                 $dt = $req->search;
             }
             else{
                 $jurnal = Jurnal::with('mapel')
-                            ->with('guru')->with('siswa')->with('kelas')->orderBy('tanggal', 'desc')->where('kelas_id', '=', $kls->id)
-                            ->paginate(15);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->with('kelas')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('kelas_id', '=', $kls->id)
+                    ->paginate(15);
             }
         }
-
         return view('Jurnal.bulanan',compact('jurnal','dt','month','year'));
     }
 
     public function print(Request $req)
     {
-        dd($req->kelas);
+        $month = Carbon::parse($req->bulan)->format("M");
+        $year = Carbon::parse($req->bulan)->format("Y");
+
         if($req->kelas == 00){
             $jurnal = Jurnal::with('mapel')
-            ->with('guru')->with('siswa')->with('kelas')->orderBy('tanggal', 'desc')->where('tanggal', 'LIKE', '%' . $req->bulan . '%')
-            ->get();
+                ->with('guru')
+                ->with('siswa')
+                ->with('kelas')
+                ->orderBy('tanggal', 'desc')
+                ->where('tanggal', 'LIKE', '%' . $req->bulan . '%')
+                ->get();
             $kelas = "All";
         }else{
             $jurnal = Jurnal::with('mapel')
-            ->with('guru')->with('siswa')->with('kelas')->orderBy('tanggal', 'desc')->where('tanggal', 'LIKE', '%' . $req->bulan . '%')->where('kelas_id','=',$req->kelas)
-            ->get();
+                ->with('guru')
+                ->with('siswa')
+                ->with('kelas')
+                ->orderBy('tanggal', 'desc')
+                ->where('tanggal', 'LIKE', '%' . $req->bulan . '%')
+                ->where('kelas_id','=',$req->kelas)
+                ->get();
             $kelas = Kelas::find($req->kelas);
             $kelas = $kelas->kelas;
         }
-        $month = Carbon::parse($req->bulan)->format("M");
-        $year = Carbon::parse($req->bulan)->format("Y");
         $pdf = PDF::loadview('Jurnal.jurnal_pdf',compact('jurnal','month','year'));
         $pdf->setPaper('A4','landscape');
-
         return $pdf->stream('Jurnal_'. $req->bulan .'_'. $kelas);
     }
 
@@ -414,27 +505,36 @@ class JurnalController extends Controller
         $siswa = Siswa::where('kelas_id','=',$kelas)->get();
         $kls = Kelas::find($kelas);
         $cls = Kelas::all();
+        $jam = $this->jamke;
 
         if ($req->has('date') ) {
             $jurnal = Jurnal::with('mapel')
-            ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->where('kelas_id', '=',$id->id )
-            ->simplePaginate(10);
+                ->with('guru')
+                ->with('siswa')
+                ->orderBy('tanggal', 'desc')
+                ->where('tanggal', '=', $req->date)
+                ->where('kelas_id', '=',$id->id )
+                ->simplePaginate(10);
             $jurnal->appends(['date' => $req->date]);
             $dx =$req->date;
 
         }else{
             $jurnal = Jurnal::with('mapel')
-            ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->where('kelas_id', '=',$id->id )
-            ->simplePaginate(10);
+                ->with('guru')
+                ->with('siswa')
+                ->orderBy('tanggal', 'desc')
+                ->where('tanggal', '=', $dt->toDateString())
+                ->where('kelas_id', '=',$id->id )
+                ->simplePaginate(10);
             $dx =$dt->toDateString();
         }
-        $jam = $this->jamke;
         return view('Jurnal.index', compact('jurnal','mpl','gr','jam','siswa','dx','cls','id'));
     }
     public function acc(Jurnal $id)
     {
         $id->valid = 1;
         $id->save();
+
         alert()->success('','Jurnal Berhasil Di Accept')->background('#3B4252')->autoClose(2000);
         return redirect()->back();
     }

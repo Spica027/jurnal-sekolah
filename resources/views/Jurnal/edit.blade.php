@@ -14,7 +14,6 @@ Data Guru | Journal
                 {{$id->mapel->mapel}}
             </div>
             <div style="font-size: 2.2rem">
-
                 Jam ke-{{$id->jam}}
             </div>
         </h3>
@@ -41,6 +40,7 @@ Data Guru | Journal
                                     </select>
                                     <div class="invalid-feedback">Mapel Harus Diisi !</div>
                                 </div>
+                                @if (Auth::user()->role == 1)
                                 <div class="form-group col-sm-12">
                                     <select class="form-control m-input" name="guru_id" required>
                                         <option value="">Guru Mata Pelajaran</option>
@@ -53,6 +53,20 @@ Data Guru | Journal
                                     </select>
                                     <div class="invalid-feedback">Guru Mapel Harus Diisi !</div>
                                 </div>
+                                @elseif(Auth::user()->role == 3)
+                                <div class="form-group col-sm-12">
+                                    <select class="form-control m-input" name="guru_id" required>
+                                        <option value="">Kelas</option>
+                                        @foreach ($kls as $kelas)
+                                        <option value="{{$kelas->id}}" @if ($kelas->id ==
+                                            $id->kelas_id)selected="selected"@endif>
+                                            {{$kelas->kelas}}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback">Kelas Harus Diisi !</div>
+                                </div>
+                                @endif
                                 <div class="form-group col-sm-12">
                                     <input type="text" class="form-control" name="materi"
                                         placeholder="Materi Yang Diberikan" value="{{$id->materi}}" autocomplete="off"

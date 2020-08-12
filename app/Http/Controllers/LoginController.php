@@ -16,6 +16,7 @@ class LoginController extends Controller
     {
         return redirect('/jurnal');
     }
+
     public function login()
     {
         if (Auth::user()) {
@@ -25,6 +26,7 @@ class LoginController extends Controller
             return view('Auth.login');
         }
     }
+
     public function loginp(Request $req)
     {
         $this->validate($req,[
@@ -43,6 +45,7 @@ class LoginController extends Controller
             return redirect()->back();
         };
     }
+
     public function signup(Request $req)
     {
         $validate = $req->validate([
@@ -51,13 +54,16 @@ class LoginController extends Controller
             'pass' => 'required',
             'pass1' => 'same:pass'
         ]);
+
         $user = new User();
         $user->name = $req->username;
         $user->email = 'ketua@gmail.com';
         $user->password = Hash::make($req->pass);
         $user->role = 1;
         $user->kelas_id = $req->kelas;
+
         $valid = User::where('kelas_id',$req->kelas)->first();
+
         if ($valid == null) {
             $user->save();
             alert()->success('','User Berhasil Terdaftar')->background('#3B4252')->autoClose(1700);

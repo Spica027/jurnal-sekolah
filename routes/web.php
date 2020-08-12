@@ -30,6 +30,7 @@ Route::group(['middleware' => ['isLogin']], function () {
             Route::get('/{id}/delete', 'SiswaController@delete');
         });
     });
+
     Route::prefix('guru')->group(function(){
         Route::get('/','GuruController@index');
         Route::group(['middleware' => ['isAdmin']], function () {
@@ -39,7 +40,8 @@ Route::group(['middleware' => ['isLogin']], function () {
             Route::get('/{id}/delete', 'GuruController@delete');
         });
     });
-    route::prefix('jurnal')->group(function(){
+
+    Route::prefix('jurnal')->group(function(){
         Route::get('/{id}/edit', 'JurnalController@edit');
         Route::post('/{id}/edit-post', 'JurnalController@editp');
         Route::group(['middleware' => ['isKetua']], function () {
@@ -59,7 +61,7 @@ Route::group(['middleware' => ['isLogin']], function () {
         Route::get('/kelas/{id}', 'JurnalController@kelas');
     });
 
-    route::prefix('profile')->group(function()
+    Route::prefix('profile')->group(function()
     {
         Route::get('/','ProfileController@index');
         Route::post('/change-password','ProfileController@change');

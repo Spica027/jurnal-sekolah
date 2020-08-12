@@ -16,6 +16,7 @@ class ProfileController extends Controller
     public function index()
     {
         $cls = Kelas::all();
+
         if (Auth::user()->role==2) {
             $role = "Admin";
             $kelas = "Kelas Atas";
@@ -30,9 +31,9 @@ class ProfileController extends Controller
             $kelas = Guru::where('id','=',Auth::user()->guru_id)->first();
             $kelas = $kelas->nama;
         }
-
         return view('Auth.profile',compact('role','kelas','cls'));
     }
+
     public function change(Request $req)
     {
         $validate = $req->validate([
@@ -41,7 +42,8 @@ class ProfileController extends Controller
             'newPass2' => ['same:newPass1'],
         ]);
 
-        User::find(Auth::user()->id)->update(['password'=> Hash::make($req->newPass1)]);
+        User::find(Auth::user()->id)
+            ->update(['password'=> Hash::make($req->newPass1)]);
 
         alert()->success('','Password Berhasil Diubah')->background('#3B4252')->autoClose(1700);
         return redirect('/profile');
