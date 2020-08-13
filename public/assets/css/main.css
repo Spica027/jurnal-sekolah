@@ -80,7 +80,6 @@ body {
 .header {
 
     margin: 40px auto 15px;
-    border-bottom: 2px solid var(--color10);
 }
 
 .header h3 {

@@ -6,11 +6,10 @@ Data Siswa | Journal
 @section('content')
 <div class="container">
     <!-- Header -->
-    <div class="header">
+    <div class="header" style="border-bottom: 2px solid #81A1C1">
         <h3>Jurnal</h3>
-        @if (Auth::user()->role == 2)
         <div class="form-group" style="width: 98%">
-            <select class="form-control datepicker" name="mapel"
+            <select class="form-control datepicker" name="kelas"
                 onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);"
                 required>
                 <option value="">Kelas</option>
@@ -26,30 +25,14 @@ Data Siswa | Journal
                 @endif
                 @endforeach
             </select>
-            <div class="invalid-feedback">Mapel Harus Diisi !</div>
+            <div class="invalid-feedback">Kelas Harus Diisi !</div>
         </div>
-        @endif
         <form action="" method="get">
             <div class="form-group">
                 <input type="date" class="form-control datepicker" id="date" name="date" value="{{$dx}}">
                 <button type="submit" class="btn filters">
                     <i class="fas fa-filter"></i>
                 </button>
-                @if (Auth::user()->role == 1)
-                @if ($jam == "home")
-                <button type="button" class="btn danger" data-toggle="modal">
-                    <i class="fas fa-minus"></i>
-                </button>
-                @elseif($jam == "break")
-                <button type="button" class="btn danger" data-toggle="modal">
-                    <i class="fas fa-minus"></i>
-                </button>
-                @else
-                <button type="button" class="btn tambah" data-toggle="modal" data-target="#modalscrollable">
-                    <i class="fas fa-plus"></i>
-                </button>
-                @endif
-                @endif
             </div>
         </form>
     </div>
@@ -59,10 +42,6 @@ Data Siswa | Journal
             <i class="material-icons print-icon">print</i> <span>Print PDF</span>
         </a>
         <div class="unverify mb-4">
-            <div class="top">
-                <h5>Jurnal Belum Terverifikasi</h5>
-                <span class="mb-3"></span>
-            </div>
 
             @forelse ($jurnal as $jurnals)
             <div class="list">
@@ -163,17 +142,6 @@ Data Siswa | Journal
             {{$jurnal->links()}}
             @endif
         </div>
-
-        <div class="verify mb-4">
-            <div class="top">
-                <h5>Jurnal Terverifikasi</h5>
-                <span class="mb-3"></span>
-            </div>
-            @if (Auth::user()->role == 2)
-            {{$jurnal->links()}}
-            @endif
-        </div>
-
         @if (Auth::user()->role == 1)
         <!-- Modal Section -->
         <div class="modal fade" id="modalscrollable" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -248,7 +216,7 @@ Data Siswa | Journal
                 <div class="modal-body">
                     <form action="/jurnal/print" method="POST">
                         @csrf
-                        <input class=" form-control" name="bulan" type="month" value="2020-07">
+                        <input class=" form-control" name="bulan" type="month" value="{{$month}}">
                         <br>
                         @if (Auth::user()->role == 2)
                         <select class="form-control datepicker" name="kelas" required>

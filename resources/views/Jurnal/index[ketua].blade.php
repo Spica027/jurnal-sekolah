@@ -8,34 +8,12 @@ Data Siswa | Journal
     <!-- Header -->
     <div class="header">
         <h3>Jurnal</h3>
-        @if (Auth::user()->role == 2)
-        <div class="form-group" style="width: 98%">
-            <select class="form-control datepicker" name="mapel"
-                onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);"
-                required>
-                <option value="">Kelas</option>
-                @foreach ($cls as $kelas)
-                @if ( request()->is('jurnal/kelas/*'))
-                <option value="{{$kelas->id}}" @if ($kelas->id == $id->id)
-                    selected
-                    @endif>
-                    {{$kelas->kelas}}
-                </option>
-                @else
-                <option value="jurnal/kelas/{{$kelas->id}}">{{$kelas->kelas}}</option>
-                @endif
-                @endforeach
-            </select>
-            <div class="invalid-feedback">Mapel Harus Diisi !</div>
-        </div>
-        @endif
         <form action="" method="get">
             <div class="form-group">
                 <input type="date" class="form-control datepicker" id="date" name="date" value="{{$dx}}">
                 <button type="submit" class="btn filters">
                     <i class="fas fa-filter"></i>
                 </button>
-                @if (Auth::user()->role == 1)
                 @if ($jam == "home")
                 <button type="button" class="btn danger" data-toggle="modal">
                     <i class="fas fa-minus"></i>
@@ -49,28 +27,25 @@ Data Siswa | Journal
                     <i class="fas fa-plus"></i>
                 </button>
                 @endif
-                @endif
             </div>
         </form>
     </div>
     <!-- Content -->
     <div class="konten">
-        <a href="#modalx" class="btn btn-print" data-toggle="modal" id="printModal">
-            <i class="material-icons print-icon">print</i> <span>Print PDF</span>
-        </a>
         <div class="unverify mb-4">
+            @if (!$jurnal_invalid->isEmpty())
             <div class="top">
                 <h5>Jurnal Belum Terverifikasi</h5>
                 <span class="mb-3"></span>
             </div>
+            @endif
 
-            @forelse ($jurnal as $jurnals)
+            @forelse ($jurnal_invalid as $jurnals)
             <div class="list">
                 <div class="item">
-                    @if (Auth::user()->role == 1)
                     <a class="item-swipe itemDesk" href="#navCtrl" data-toggle="modal">
                         <div class="jamke">
-                            {{$jurnals->jam}}
+                            {{str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT)}} - {{$jurnals->guru->kode}}
                         </div>
                         <div class="mapel">{{$jurnals->mapel->mapel}}</div>
                     </a>
@@ -120,13 +95,13 @@ Data Siswa | Journal
 
                     <a class="item-swipe swipe-two itemMobile" href="/jurnal/{{$jurnals->id}}/info">
                         <div class="jamke">
-                            {{$jurnals->jam}}
+                            {{str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT)}} - {{$jurnals->guru->kode}}
                         </div>
                         <div class="mapel">{{$jurnals->mapel->mapel}}</div>
                     </a>
                     <div class="item-back">
                         <button class="action second btn-acc" type="button">
-                            <a href="/jurnal/{{$jurnals->id}}/edit">
+                            <a href="/jurnal/{{$jurnals->id}}/accept">
                                 <span class="material-icons">assignment_turned_in</span>
                             </a>
                         </button>
@@ -136,31 +111,10 @@ Data Siswa | Journal
                             </a>
                         </button>
                     </div>
-                    @else
-                    <a class="item-swipex" href="/jurnal/{{$jurnals->id}}/info">
-                        <div class="jamke">
-                            {{$jurnals->jam}}
-                            - {{$jurnals->kelas->kelas}}
-                        </div>
-                        <div class="mapel">{{$jurnals->mapel->mapel}}</div>
-                    </a>
-                    @endif
                 </div>
             </div>
             @empty
-            <div class="list">
-                <div class="item">
-                    <a class="item-swipex" href="#">
-                        <center>
-                            Jurnal Hari ini Kosong
-                        </center>
-                    </a>
-                </div>
-            </div>
             @endforelse
-            @if (Auth::user()->role == 2)
-            {{$jurnal->links()}}
-            @endif
         </div>
 
         <div class="verify mb-4">
@@ -168,12 +122,36 @@ Data Siswa | Journal
                 <h5>Jurnal Terverifikasi</h5>
                 <span class="mb-3"></span>
             </div>
-            @if (Auth::user()->role == 2)
-            {{$jurnal->links()}}
-            @endif
+            @forelse ($jurnal_valid as $jurnals)
+            <div class="list">
+                <div class="item">
+                    <a href="/jurnal/{{$jurnals->id}}/info" class="item-swipex">
+                        <div class="jamke">
+                            {{str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT)}} - {{$jurnals->guru->kode}}
+                        </div>
+                        <div class="mapel">{{$jurnals->mapel->mapel}}</div>
+                    </a>
+                    <a class="item-swipex itemMobile" href="/jurnal/{{$jurnals->id}}/info">
+                        <div class="jamke">
+                            {{str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT)}} - {{$jurnals->guru->kode}}
+                        </div>
+                        <div class="mapel">{{$jurnals->mapel->mapel}}</div>
+                    </a>
+                </div>
+            </div>
+            @empty
+            <div class="list">
+                <div class="item">
+                    <a class="item-swipex" href="#">
+                        <center>
+                            Jurnal Terverifikasi Kosong
+                        </center>
+                    </a>
+                </div>
+            </div>
+            @endforelse
         </div>
 
-        @if (Auth::user()->role == 1)
         <!-- Modal Section -->
         <div class="modal fade" id="modalscrollable" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
             aria-hidden="true" width="100%">
@@ -232,37 +210,7 @@ Data Siswa | Journal
                 </div>
             </div>
         </div>
-        @endif
         {{-- end --}}
-    </div>
-    <div class="modal fade" id="modalx" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
-        width="100%">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">
-                        Print Jurnal
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <form action="/jurnal/print" method="POST">
-                        @csrf
-                        <input class=" form-control" name="bulan" type="month" value="2020-07">
-                        <br>
-                        @if (Auth::user()->role == 2)
-                        <select class="form-control datepicker" name="kelas" required>
-                            <option value="00">Semua</option>
-                            @foreach ($cls as $kelas)
-                            <option value="{{$kelas->id}}">{{$kelas->kelas}}</option>
-                            @endforeach
-                        </select>
-                        <br>
-                        @endif
-                        <button type="submit" class="btn btn-success btn-block">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 
 

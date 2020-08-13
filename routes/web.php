@@ -44,12 +44,11 @@ Route::group(['middleware' => ['isLogin']], function () {
     Route::prefix('jurnal')->group(function(){
         Route::get('/{id}/edit', 'JurnalController@edit');
         Route::post('/{id}/edit-post', 'JurnalController@editp');
+        Route::post('/create-post', 'JurnalController@createp');
         Route::group(['middleware' => ['isKetua']], function () {
-            Route::post('/create-post', 'JurnalController@createpk');
             Route::get('/{id}/accept', 'JurnalController@acc');
         });
         Route::group(['middleware' => ['isGuru']], function () {
-            Route::post('/create-post', 'JurnalController@createpg');
             Route::get('/{id}/add-absen', 'JurnalController@add');
             Route::post('/{id}/add-absen-post', 'JurnalController@addp');
             Route::get('/{id}/delete', 'JurnalController@delete');
@@ -57,8 +56,10 @@ Route::group(['middleware' => ['isLogin']], function () {
         Route::get('/', 'JurnalController@index');
         Route::get('/{id}/info', 'JurnalController@info');
         Route::get('/bulanan', 'JurnalController@bulanan');
-        Route::post('/print', 'JurnalController@print');
-        Route::get('/kelas/{id}', 'JurnalController@kelas');
+        Route::group(['middleware' => ['isAdmin']], function () {
+            Route::post('/print', 'JurnalController@print');
+            Route::get('/kelas/{id}', 'JurnalController@kelas');
+        });
     });
 
     Route::prefix('profile')->group(function()

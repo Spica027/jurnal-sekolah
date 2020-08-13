@@ -228,7 +228,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Alert' => RealRashid\SweetAlert\SweetAlertServiceProvider::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
-
     ],
 
 ];

@@ -14,6 +14,7 @@ use Arr;
 use App\Guru;
 use Carbon\Carbon;
 use PDF;
+use SnappyImage;
 use DB;
 
 class JurnalController extends Controller
@@ -134,6 +135,7 @@ class JurnalController extends Controller
         $siswa = Siswa::where('kelas_id','=',$kelas)->get();
         $guru = Auth::user()->guru_id;
         $jam = $this->jamke;
+        $month = $dt->format('Y-m');
 
         //ketua
         if (Auth::user()->role == 1){
@@ -179,12 +181,22 @@ class JurnalController extends Controller
         elseif(Auth::user()->role == 2) {
             if ($req->has('date') ) {
                 $jurnal = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $req->date)->simplePaginate(10);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $req->date)
+                    ->where('valid','=',1)
+                    ->simplePaginate(10);
                 $dx =$req->date;
                 $jurnal->appends(['date' => $req->date]);
             }else{
                 $jurnal = Jurnal::with('mapel')
-                ->with('guru')->with('siswa')->orderBy('tanggal', 'desc')->where('tanggal', '=', $dt->toDateString())->simplePaginate(10);
+                    ->with('guru')
+                    ->with('siswa')
+                    ->orderBy('tanggal', 'desc')
+                    ->where('tanggal', '=', $dt->toDateString())
+                    ->where('valid','=',1)
+                    ->simplePaginate(10);
                 $dx =$dt->toDateString();
             }
         }
@@ -233,59 +245,59 @@ class JurnalController extends Controller
             return view('Jurnal.index[ketua]', compact('mpl','gr','jam','siswa','dx','cls','today','jurnal_valid','jurnal_invalid'));
         }
         elseif (Auth::user()->role == 2) {
-            return view('Jurnal.index[admin]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today'));
+            return view('Jurnal.index[admin]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','today','month'));
         }
         elseif (Auth::user()->role == 3) {
             return view('Jurnal.index[guru]', compact('mpl','gr','jam','siswa','dx','cls','today','jurnal_valid','jurnal_invalid'));
         }
     }
 
-    public function createpk(Request $req)
+    public function createp(Request $req)
     {
         $dt =Carbon::now();
         $kelas = Auth::user()->kelas_id;
         $kls = Kelas::find($kelas);
+        $guru = Auth::user()->guru_id;
 
         $jurnal = new Jurnal();
-        $jurnal->kelas_id = $kls->id;
-        $jurnal->tanggal = $dt->toDateString();
-        $jurnal->jam = $this->jamke;
-        $jurnal->mapel_id = $req->mapel;
-        $jurnal->guru_id = $req->guru;
-        $jurnal->materi = $req->materi;
-        $jurnal->keterangan = $req->keterangan;
-
-        $valid = Jurnal::where('jam', '=',$this->jamke)
-            ->where('tanggal', '=', $dt->toDateString())
-            ->where('kelas_id', '=', $kls->id)
-            ->first();
-        if ($valid == null) {
-            $jurnal->save();
-            return redirect('/jurnal');
+        if (Auth::user()->role == 1) {
+            $jurnal->kelas_id = $kls->id;
+        }
+        elseif (Auth::user()->role == 3) {
+            $jurnal->kelas_id = $req->kelas;
         }
         else{
             return redirect()->back();
         }
-    }
-
-    public function createpg(Request $req)
-    {
-        $dt =Carbon::now();
-        $guru = Auth::user()->guru_id;
-
-        $jurnal = new Jurnal();
-        $jurnal->kelas_id = $req->kelas;
         $jurnal->tanggal = $dt->toDateString();
         $jurnal->jam = $this->jamke;
         $jurnal->mapel_id = $req->mapel;
-        $jurnal->guru_id = $guru;
+        if (Auth::user()->role == 1) {
+            $jurnal->guru_id = $req->guru;
+        }
+        elseif (Auth::user()->role == 3) {
+            $jurnal->guru_id = $guru;
+        }
         $jurnal->materi = $req->materi;
         $jurnal->keterangan = $req->keterangan;
-        $jurnal->valid = 0;
-
-        $valid = Jurnal::where('jam', '=', $this->jamke)
+        if (Auth::user()->role == 1) {
+            $jurnal->valid = 1;
+        }
+        elseif(Auth::user()->role ==3){
+            $jurnal->valid = 0;
+        }
+        if (Auth::user()->role == 1) {
+            $valid = Jurnal::where('jam', '=',$this->jamke)
             ->where('tanggal', '=', $dt->toDateString())
+            ->where('kelas_id', '=', $kls->id)
             ->first();
+        }
+        elseif (Auth::user()->role == 3) {
+            $valid = Jurnal::where('jam', '=',$this->jamke)
+            ->where('tanggal', '=', $dt->toDateString())
+            ->where('mapel_id', '=', $req->mapel)
+            ->first();
+        }
         if ($valid == null) {
             $jurnal->save();
             return redirect('/jurnal');
@@ -327,7 +339,8 @@ class JurnalController extends Controller
             $valid = DB::table('jurnal_siswa')
                 ->where('jurnal_id', $id->id)
                 ->where('siswa_id', $req->absen)
-                ->first();
+                ->get();
+            $valid = $valid->toArray();
             if ($valid == null) {
                 for ($i=0; $i <$jumlah ; $i++) {
                     DB::insert('insert into jurnal_siswa (jurnal_id, siswa_id,keterangan) values (?, ?, ?)', [$id->id,$absen[$i], $keterangan[$i]]);
@@ -336,10 +349,10 @@ class JurnalController extends Controller
                 return redirect('/jurnal');
             }
             else {
-                $dx = array_search($valid->siswa_id, $req->absen);
-                DB::table('jurnal_siswa')
-                    ->where('id', $valid->id)
-                    ->update(['keterangan' => $keterangan[$dx]]);
+                for ($i=0; $i <$jumlah ; $i++) {
+                    $query = DB::update('update jurnal_siswa set keterangan = ? where jurnal_id = ? AND siswa_id = ?', [$keterangan[$i],$id->id,$absen[$i]]);
+                }
+                alert()->success('','Absen Siswa Berhasil Diupdate')->background('#3B4252')->autoClose(2000);
                 return redirect('/jurnal');
             }
         }
@@ -528,7 +541,7 @@ class JurnalController extends Controller
                 ->simplePaginate(10);
             $dx =$dt->toDateString();
         }
-        return view('Jurnal.index', compact('jurnal','mpl','gr','jam','siswa','dx','cls','id'));
+        return view('Jurnal.index[admin]', compact('jurnal','mpl','gr','jam','siswa','dx','cls','id'));
     }
     public function acc(Jurnal $id)
     {

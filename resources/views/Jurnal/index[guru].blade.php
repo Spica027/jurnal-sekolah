@@ -31,9 +31,9 @@ Data Siswa
     </div>
     <!-- Content -->
     <div class="konten">
-        <a href="#modalx" class="btn btn-print" data-toggle="modal" id="printModal">
+        {{-- <a href="#modalx" class="btn btn-print" data-toggle="modal" id="printModal">
             <i class="material-icons print-icon">print</i> <span>Print PDF</span>
-        </a>
+        </a> --}}
         <div class="unverify mb-4">
             @if (!$jurnal_invalid->isEmpty())
             <div class="top">
@@ -46,7 +46,7 @@ Data Siswa
                 <div class="item">
                     <a class="item-swipe itemDesk" href="#navCtrl" data-toggle="modal">
                         <div class="jamke">
-                            {{$jurnals->jam}} - {{$jurnals->kelas->kelas}}
+                            {{str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT)}} - {{$jurnals->kelas->kelas}}
                         </div>
                         <div class="mapel">{{$jurnals->mapel->mapel}}</div>
                     </a>
@@ -103,7 +103,7 @@ Data Siswa
                     </div>
                     <a class="item-swipe swipe itemMobile" href="/jurnal/{{$jurnals->id}}/info">
                         <div class="jamke">
-                            {{$jurnals->jam}} - {{$jurnals->kelas->kelas}}
+                            {{str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT)}} - {{$jurnals->kelas->kelas}}
                         </div>
                         <div class="mapel">{{$jurnals->mapel->mapel}}</div>
                     </a>
@@ -140,7 +140,8 @@ Data Siswa
                 <div class="item">
                     <a class="item-swipe itemDesk" href="#navCtrl1" data-toggle="modal">
                         <div class="jamke">
-                            {{$jurnals->jam}} - {{$jurnals->kelas->kelas}}
+                            {{str_pad(str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT), 2, "0", STR_PAD_LEFT)}} -
+                            {{$jurnals->kelas->kelas}}
                         </div>
                         <div class="mapel">{{$jurnals->mapel->mapel}}</div>
                     </a>
@@ -179,7 +180,7 @@ Data Siswa
                     </div>
                     <a class="item-swipe swipe-one itemMobile" href="/jurnal/{{$jurnals->id}}/info">
                         <div class="jamke">
-                            {{$jurnals->jam}} - {{$jurnals->kelas->kelas}}
+                            {{str_pad($jurnals->jam, 2, "0", STR_PAD_LEFT)}} - {{$jurnals->kelas->kelas}}
                         </div>
                         <div class="mapel">{{$jurnals->mapel->mapel}}</div>
                     </a>
@@ -203,27 +204,6 @@ Data Siswa
                 </div>
             </div>
             @endforelse
-
-            <div class="modal fade" id="modalx" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                aria-hidden="true" width="100%">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="myModalLabel">
-                                Print Jurnal
-                            </h4>
-                        </div>
-                        <div class="modal-body">
-                            <form action="/jurnal/print" method="POST">
-                                @csrf
-                                <input class=" form-control" name="bulan" type="month" value="2020-07">
-                                <br>
-                                <button type="submit" class="btn btn-success btn-block">Submit</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Modal Section -->
             <div class="modal fade" id="modalscrollable" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
