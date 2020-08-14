@@ -482,15 +482,17 @@ class JurnalController extends Controller
     {
         $month = Carbon::parse($req->bulan)->format("M");
         $year = Carbon::parse($req->bulan)->format("Y");
+        $cls = Kelas::all();
 
         if($req->kelas == 00){
             $jurnal = Jurnal::with('mapel')
                 ->with('guru')
                 ->with('siswa')
                 ->with('kelas')
-                ->orderBy('tanggal', 'desc')
+                ->orderBy('kelas_id', 'desc')
                 ->where('tanggal', 'LIKE', '%' . $req->bulan . '%')
-                ->get();
+                ->get()
+                ->groupBy('kelas_id');
             $kelas = "All";
         }else{
             $jurnal = Jurnal::with('mapel')
@@ -504,7 +506,7 @@ class JurnalController extends Controller
             $kelas = Kelas::find($req->kelas);
             $kelas = $kelas->kelas;
         }
-        $pdf = PDF::loadview('Jurnal.jurnal_pdf',compact('jurnal','month','year'));
+        $pdf = PDF::loadview('Jurnal.jurnal_pdf',compact('jurnal','month','year','cls','kelas'));
         $pdf->setPaper('A4','landscape');
         return $pdf->stream('Jurnal_'. $req->bulan .'_'. $kelas);
     }
